@@ -43,18 +43,11 @@ public class OrderRepositoryImpl extends QuerydslRepositorySupport
 
         // TODO : pagination + fetch join ???
         JPQLQuery<Order> query = from(order)
-        JPQLQuery<Long> pagedQuery = getQuerydsl().applyPagination(pageable, query);
-        long totalCount = 0L;
-        try {
-            totalCount = pagedQuery.fetchCount();
-        } catch (NoResultException ex) {
-            // ignore
-        }
-
-        List<Long> ids = pagedQuery.fetch();
+                .innerJoin(order.customer, customer)/*.fetchJoin()*/
+                .leftJoin(order.orderItems, orderItem)/*.fetchJoin()*/
+                .innerJoin(orderItem.item, item)/*.fetchJoin()*/;
 
         JPQLQuery<Order> pagedQuery = getQuerydsl().applyPagination(pageable, query);
-        return new PageImpl<>(list, pageable, totalCount);
 
         long totalCount = 0L;
 
